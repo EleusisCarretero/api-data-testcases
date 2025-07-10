@@ -1,0 +1,24 @@
+{
+  "name": "api-data-testcases",
+  "version": "1.0.0",
+  "description": "API to read/write info about test framework data and executions",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./index.js --exec babel-node $*"
+  },
+  "author": "Eleusis Carretero",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "minimist": "^1.2.8",
+    "mongoose": "^8.16.3",
+    "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.28.0",
+    "@babel/core": "^7.28.0",
+    "@babel/node": "^7.28.0",
+    "@babel/preset-env": "^7.28.0"
+  }
+}
