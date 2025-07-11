@@ -23,9 +23,9 @@ exec(`bash ${mongoScript}`, (error, stdout, stderr) => {
   console.log(`📜 STDOUT:\n${stdout}`);
 });
 
-
+const args = require('minimist')(process.argv.slice(2));
 const app = express();
-const PORT = 3000;
+const PORT = 3000 || args.port;
 
 //mongoose connection
 mongoose.Promise = global.Promise;
