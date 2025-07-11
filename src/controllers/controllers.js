@@ -23,8 +23,7 @@ export class testReportManager {
 
     async getAllTestReports(req, res){
         try{
-            console.log(`Actual body content: ${req.body}`);
-            const reportsFound = await this.testReport.find({});
+            const reportsFound = await this.testReport.find({}).sort({[req.params.suiteName]:1});
             res.status(statusCodes.reqSuccessfull.ok).json(reportsFound);
         }catch(error){
             console.error(`Error trying to get all the test reports`);
@@ -37,7 +36,7 @@ export class testReportManager {
     async getTestReportByID(rep, res) {
         try{
             console.log(`Actual body contenct: ${req.body}`);
-            const reportFoundById = await this.testReport.findById(rep.params.testReportId);
+            const reportFoundById = await this.testReport.findById(rep.params._id);
             res.status(statusCodes.reqSuccessfull.ok).json(reportFoundById);
         }catch(error){
             console.error(`Error trying to get test Report by ID`);
