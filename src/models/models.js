@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 export const testReportSchema = new Schema ({
-    testSuiteName: {
+    suiteName: {
         type:String,
         require: 'Enter a test suite name'
     },
