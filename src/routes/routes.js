@@ -8,7 +8,9 @@ const routes = (app) => {
     .post((req, res) => testrepo.createNewTestReport(req, res));
 
     app.route('/testReport/:_id')
-    .get((req, res) => testrepo.getTestReportByID(req, res));
+    .get((req, res) => testrepo.getTestReportByID(req, res))
+    .put((req, res) => testrepo.updateTestReportByID(req,res))
+    .delete((req, res) => testrepo.deleteTestReportByID(req,res));
     
 }
 export default routes

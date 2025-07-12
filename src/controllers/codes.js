@@ -3,7 +3,8 @@ export const statusCodes = {
     reqSuccessfull: {
         ok:200,
         created:201,
-        caching:203
+        caching:203,
+        noContent: 204
     },
     ReqRedirect: '', // 300
     clientError: {

@@ -32,14 +32,51 @@ export class testReportManager {
     }
 
     // /testReport:_id quieres
-
-    async getTestReportByID(rep, res) {
+    async getTestReportByID(req, res) {
         try{
-            console.log(`Actual body contenct: ${req.body}`);
-            const reportFoundById = await this.testReport.findById(rep.params._id);
+            const reportFoundById = await this.testReport.findById(req.params._id);
+            if(!reportFoundById){
+                return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id}  not found`});
+            }
             res.status(statusCodes.reqSuccessfull.ok).json(reportFoundById);
         }catch(error){
             console.error(`Error trying to get test Report by ID`);
+            res.status(statusCodes.serverProblem.internalError).json({error:error.message});
+        }
+    }
+    /**
+     * Delete testReport by ID
+     * @param {*} req - missing
+     * @param {*} res - missong
+     */
+    async deleteTestReportByID(req, res){
+        try{
+            const deleted = await this.testReport.findByIdAndDelete(req.params._id);
+            if(!deleted){
+                return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id} not found`})
+            }
+            res.status(statusCodes.reqSuccessfull.noContent).json({"message": `${req.params._id} successfully deleteded`});
+        }catch(error){
+            console.error(`Error trying to deletind test report ${error}`)
+            res.status(statusCodes.serverProblem.internalError).json({error:error.message});
+        }
+    }
+
+    /**
+     * Update a testReport based by ID
+     * @param {*} req  - missing
+     * @param {*} res - missing
+     * @returns 
+     */
+    async updateTestReportByID(req, res){
+        try{
+            const updated = await this.testReport.findByIdAndUpdate({_id: req.params._id}, req.body, {new:true});
+            if(!updated){
+                return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id} not found`})
+            }
+            res.status(statusCodes.reqSuccessfull.noContent).json({message:`_id ${req.params._id} succesfully updated`, updated});
+        }catch(error){
+             console.error(`Error trying to updating test report ${error}`)
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
