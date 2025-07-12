@@ -4,6 +4,10 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 export const testReportSchema = new Schema ({
+    frameworkName: {
+        type:String,
+        requiere:'Entere the framework name'
+    },
     suiteName: {
         type:String,
         require: 'Enter a test suite name'
