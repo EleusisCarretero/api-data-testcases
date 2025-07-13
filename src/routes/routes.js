@@ -12,6 +12,9 @@ const routes = (app) => {
     .get((req, res) => testrepo.getTestReportByID(req, res))
     .put((req, res) => testrepo.updateTestReportByID(req,res))
     .delete((req, res) => testrepo.deleteTestReportByID(req,res));
+
+    app.route('/testReport/stats/global')
+    .get((req, res) => testrepo.getStatsGlobal(req, res));
     
 }
 export default routes

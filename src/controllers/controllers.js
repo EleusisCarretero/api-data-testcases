@@ -10,6 +10,11 @@ export class testReportManager {
         this.testReport = mongoose.model('testReport', testReportSchema);
     }
     // /testReport quieries
+    /**
+     * 
+     * @param {*} rep 
+     * @param {*} res 
+     */
     async createNewTestReport(rep, res) {
         try{
             let newTestReport = new this.testReport(rep.body);
@@ -20,7 +25,12 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
-
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async getAllTestReports(req, res){
         try{
             // filtering
@@ -48,7 +58,11 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
-
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     */
     async deleteAllReports(req, res){
         try{
             await this.testReport.deleteMany({});
@@ -58,8 +72,13 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
-
     // /testReport:_id quieres
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async getTestReportByID(req, res) {
         try{
             const reportFoundById = await this.testReport.findById(req.params._id);
@@ -99,6 +118,7 @@ export class testReportManager {
     async updateTestReportByID(req, res){
         try{
             console.debug(`Test report id to updated: ${req.params._id} and actual body to updated ${req.body}`);
+            console.dir(req.body,{ depth: null, colors:true});
             const updated = await this.testReport.findByIdAndUpdate({_id: req.params._id}, req.body, {new:true});
             if(!updated){
                 return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id} not found`})
@@ -106,6 +126,21 @@ export class testReportManager {
             res.status(statusCodes.reqSuccessfull.noContent).json({message:`_id ${req.params._id} succesfully updated`, updated});
         }catch(error){
              console.error(`Error trying to updating test report ${error}`)
+            res.status(statusCodes.serverProblem.internalError).json({error:error.message});
+        }
+    }
+    // /stats/global
+
+    async getStatsGlobal(req, res){
+        try{
+            let {limit} = req.query;
+            limit = -1 || limit;
+            const statsFound = await this.testReport.aggregate([
+                {$group: {_id: "$reportResults.status" , count: {$sum:1}, ids: {$push:"$_id"}}},
+                {$project: {status: "$_id", _id:0, count:1}}]);
+            res.status(statusCodes.reqSuccessfull.ok).json(statsFound);
+        }catch(error){
+            console.error(`Error trying to the total run`);
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
