@@ -49,6 +49,16 @@ export class testReportManager {
         }
     }
 
+    async deleteAllReports(req, res){
+        try{
+            await this.testReport.deleteMany({});
+            res.status(statusCodes.reqSuccessfull.ok).json({message: "All the reports has been deleted"});
+        }catch(error){
+            console.error("Unable to delete all the testReports");
+            res.status(statusCodes.serverProblem.internalError).json({error:error.message});
+        }
+    }
+
     // /testReport:_id quieres
     async getTestReportByID(req, res) {
         try{
@@ -88,6 +98,7 @@ export class testReportManager {
      */
     async updateTestReportByID(req, res){
         try{
+            console.debug(`Test report id to updated: ${req.params._id} and actual body to updated ${req.body}`);
             const updated = await this.testReport.findByIdAndUpdate({_id: req.params._id}, req.body, {new:true});
             if(!updated){
                 return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id} not found`})
