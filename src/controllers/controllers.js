@@ -24,8 +24,9 @@ export class testReportManager {
     async getAllTestReports(req, res){
         try{
             // filtering
-            const {status, tag, suiteName, start, end} = req.query;
+            let {status, tag, suiteName, start, end, limit} = req.query;
             const filter = {};
+            limit = 0 || limit;
             if (status) filter['reportResults.status'] = status;
             if (tag) filter.tags = tag;
             if (suiteName) filter.suiteName = suiteName;
@@ -34,8 +35,13 @@ export class testReportManager {
                 if (start) filter['execution.startTime'].$gte = new Date(start);
                 if (end) filter['execution.startTime'].$lte = new Date(end);
             }
+
             console.dir(filter,{ depth: null, colors:true});
-            const reportsFound = await this.testReport.find(filter).sort({createdAt:-1});
+            console.log(`Actual limit of result: ${limit}`);
+            const reportsFound = await this.testReport.find(filter).limit(limit).sort({createdAt:-1});
+            if(reportsFound.length === 0){
+                return res.status(statusCodes.reqSuccessfull.ok).json({data:reportsFound, message:"No reports found with that filter"});
+            }
             res.status(statusCodes.reqSuccessfull.ok).json(reportsFound);
         }catch(error){
             console.error(`Error trying to get all the test reports`);
