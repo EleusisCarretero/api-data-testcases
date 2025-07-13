@@ -23,7 +23,19 @@ export class testReportManager {
 
     async getAllTestReports(req, res){
         try{
-            const reportsFound = await this.testReport.find({}).sort({[req.params.suiteName]:1});
+            // filtering
+            const {status, tag, suiteName, start, end} = req.query;
+            const filter = {};
+            if (status) filter['reportResults.status'] = status;
+            if (tag) filter.tags = tag;
+            if (suiteName) filter.suiteName = suiteName;
+            if (start || end){
+                filter['executionTime.startTime'] = {};
+                if (start) filter['execution.startTime'].$gte = new Date(start);
+                if (end) filter['execution.startTime'].$lte = new Date(end);
+            }
+            console.dir(filter,{ depth: null, colors:true});
+            const reportsFound = await this.testReport.find(filter).sort({createdAt:-1});
             res.status(statusCodes.reqSuccessfull.ok).json(reportsFound);
         }catch(error){
             console.error(`Error trying to get all the test reports`);
