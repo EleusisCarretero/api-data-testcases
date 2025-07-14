@@ -40,6 +40,10 @@ export const testReportSchema = new Schema ({
             errorMsg: String
         }]
     },
+    retry: {
+        type: Boolean,
+        default: false
+    },
     executionTime: {
         startTime:{
             type: Date,
