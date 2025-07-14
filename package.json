@@ -4,7 +4,8 @@
   "description": "API to read/write info about test framework data and executions",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js --exec babel-node $*"
+    "start": "nodemon ./index.js --exec babel-node $*",
+    "test": "jest"
   },
   "author": "Eleusis Carretero",
   "license": "ISC",
@@ -19,6 +20,7 @@
     "@babel/cli": "^7.28.0",
     "@babel/core": "^7.28.0",
     "@babel/node": "^7.28.0",
-    "@babel/preset-env": "^7.28.0"
+    "@babel/preset-env": "^7.28.0",
+    "jest": "^30.0.4"
   }
 }
