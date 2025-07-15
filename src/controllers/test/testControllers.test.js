@@ -1,9 +1,115 @@
 import { json } from "body-parser";
 import { testReportManager } from "../controllers";
 
- // 1. create a global instance of the class we can to mock
-    const unitTestManager = new testReportManager();
+/**
+ * Globals
+ */
 
+// 1. create a global instance of the class we can to mock
+const unitTestManager = new testReportManager();
+/**
+ * createNewTestReport UnitTest
+ */
+
+test('Test createNewTestReport: Positive response', async() => {
+
+    // define variables
+    const req = {
+        body: {
+            frameworkName: "Selenium-java-automation",
+            suiteName: "Nightly regression",
+            tags: ["smoke", "log in", "products", "sanity"],
+            reportResults: {
+                status:'PASSED',
+                totalExecuted: 10,
+                totalPassed: 10,
+                totalFailed: 0,
+                reportLink: "https://report_n1.xml",
+                failedTestCases: null
+            },
+            retry: false,
+            executionTimes: {
+                startTime: "2025-08-09",
+                endTime: "2025-08-09",
+                duration: 70000
+            },
+            enviroment:{
+                browser: "Chrome",
+                branch: "main",
+                commit: "b5b4bce"
+            }
+        }
+    }
+    const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis()
+    }
+    //mocking
+    const saveMock = jest.fn().mockResolvedValue(req.body);
+    unitTestManager.testReport = jest.fn(() => ({
+        save: saveMock
+    }));
+    // calling function under test
+    await unitTestManager.createNewTestReport(req,res);
+    // Making assertion
+    expect(unitTestManager.testReport).toHaveBeenCalledWith(req.body);
+    expect(saveMock).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith(req.body)
+});
+
+test('Test createNewTestReport: throwing error', async() => {
+    const msgError = "expectedResponse is not defined";
+    const req = {
+        body: {
+            frameworkName: "Selenium-java-automation",
+            suiteName: "Nightly regression",
+            tags: ["smoke", "log in", "products", "sanity"],
+            reportResults: {
+                status:'PASSED',
+                totalExecuted: 10,
+                totalPassed: 10,
+                totalFailed: 0,
+                reportLink: "https://report_n1.xml",
+                failedTestCases: null
+            },
+            retry: false,
+            executionTimes: {
+                startTime: "2025-08-09",
+                endTime: "2025-08-09",
+                duration: 70000
+            },
+            enviroment:{
+                browser: "Chrome",
+                branch: "main",
+                commit: "b5b4bce"
+            }
+        }
+    }
+    const res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis()
+    }
+    // 3. Mock the value of the function we're Testing
+    unitTestManager.testReport = {
+        findById: jest.fn(() => {throw new Error(msgError)})
+    }
+    // Execution function under test
+    await unitTestManager.createNewTestReport(req,res);
+    // Making assertions
+    expect(() => expectedResponse()).toThrow();
+    expect(() => expectedResponse()).toThrow(Error);
+    expect(() => expectedResponse()).toThrow(msgError);
+    expect(res.json).not.toHaveBeenCalledWith(req.body);
+    expect(res.json).toHaveBeenCalledWith({"error":"this.testReport is not a constructor"});
+    expect(res.status).toHaveBeenCalledWith(500);
+    
+
+});
+
+/**
+  * getTestReportByID UnitTest
+  *  */   
 test('Test getTestReportByID: Positive response', async () => {
     // 2 mock the parameters needed for the function
     const expectedResponse = {_id:'123', name: 'test report'};
@@ -53,7 +159,7 @@ test('Test getTestReportByID: throwsing error', async() => {
         status: jest.fn().mockReturnThis()
     };
     // 3. Mock the value of the function we're Testing
-     unitTestManager.testReport = {
+    unitTestManager.testReport = {
         findById: jest.fn(() => {throw new Error(msgError)})
     }
     await unitTestManager.getTestReportByID(req, res);

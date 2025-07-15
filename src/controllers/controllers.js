@@ -20,10 +20,12 @@ export class testReportManager {
     async createNewTestReport(rep, res) {
         try{
             let newTestReport = new this.testReport(rep.body);
+            console.log(`newTestReport value ${newTestReport}`);
             const savedTestReport = await newTestReport.save();
+            console.log(`SaveTestReport value: ${savedTestReport}`);
             res.status(statusCodes.reqSuccessfull.created).json(savedTestReport);
         }catch(error){
-            console.error(`Error trying to add new test report ${error}`);
+            console.log(`Error trying to add new test report ${error}`);
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
