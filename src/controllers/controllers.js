@@ -83,13 +83,15 @@ export class testReportManager {
      */
     async getTestReportByID(req, res) {
         try{
+            console.debug(`Actual value of ${req.params._id}`);
             const reportFoundById = await this.testReport.findById(req.params._id);
+            console.dir(reportFoundById,{ depth: null, colors:true});
             if(!reportFoundById){
                 return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id}  not found`});
             }
             res.status(statusCodes.reqSuccessfull.ok).json(reportFoundById);
         }catch(error){
-            console.error(`Error trying to get test Report by ID`);
+            console.log(`Error trying to get test Report by ID`);
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
@@ -134,9 +136,7 @@ export class testReportManager {
         }
     }
     async retryTestReportByID(req, res) {
-        console.log("AQUI")
         try{
-            
             const retry = req.query;
             const updated = await this.testReport.findByIdAndUpdate({_id: req.params._id}, retry, {new:true});
             if(!updated){
