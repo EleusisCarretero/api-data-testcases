@@ -29,7 +29,7 @@ describe('Creating new test report Module: createNewTestReport', () => {
                     failedTestCases: null
                 },
                 retry: false,
-                executionTimes: {
+                executionTime: {
                     startTime: "2025-08-09",
                     endTime: "2025-08-09",
                     duration: 70000
@@ -76,6 +76,54 @@ describe('Creating new test report Module: createNewTestReport', () => {
         expect(res.json).not.toHaveBeenCalledWith(req.body);
         expect(res.json).toHaveBeenCalledWith({"error":"this.testReport is not a constructor"});
         expect(res.status).toHaveBeenCalledWith(500);
+    });
+
+    test('Test createNewTestReport: missing requiered parameters', async() =>{
+        // Defining req with missing requiere field
+        const msgError = "expectedResponse is not defined";
+        const excludedField ='frameworkName';
+        const expectedErrorMsg = `testReport validation failed: ${excludedField}: Entere the framework name`;
+        const reqMissingParam = {body:{}};
+        for(let key in req){
+            for(k in req[key]){
+                if(k!= excludedField) {
+                    reqMissingParam[key][k] = req.body[k];
+                }
+            }
+        }
+        // Calling function under test
+        await unitTestManager.createNewTestReport(reqMissingParam, res);
+        // Making assertions
+        expect(() => expectedResponse()).toThrow();
+        expect(() => expectedResponse()).toThrow(msgError);
+        expect(res.json).not.toHaveBeenCalledWith(req.body);
+        expect(res.json).toHaveBeenCalledWith({"error":expectedErrorMsg});
+        expect(res.status).toHaveBeenCalledWith(500);
+
+    });
+
+    test('Test createNewTestReport: Missing not requiered field', async() => {
+        const reqMissingParam = {body:{}};
+        const excludedField ='tags';
+        for(let key in req){
+            for(k in req[key]){
+                if(k!= excludedField) {
+                    reqMissingParam[key][k] = req.body[k];
+                }
+            }
+        }
+        //mocking
+        const saveMock = jest.fn().mockResolvedValue(reqMissingParam.body);
+        unitTestManager.testReport = jest.fn(() => ({
+            save: saveMock
+        }));
+        // calling function under test
+        await unitTestManager.createNewTestReport(reqMissingParam,res);
+        // Making assertion
+        expect(unitTestManager.testReport).toHaveBeenCalledWith(reqMissingParam.body);
+        expect(saveMock).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith(reqMissingParam.body)
     });
 });
 
