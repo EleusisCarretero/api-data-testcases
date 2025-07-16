@@ -1,5 +1,5 @@
-import { json } from "body-parser";
 import { testReportManager } from "../controllers";
+const { statusCodes } = require("../codes"); 
 
 /**
  * Globals
@@ -57,7 +57,7 @@ describe('Creating new test report Module: createNewTestReport', () => {
         // Making assertion
         expect(unitTestManager.testReport).toHaveBeenCalledWith(req.body);
         expect(saveMock).toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.reqSuccessfull.created);
         expect(res.json).toHaveBeenCalledWith(req.body)
     });
 
@@ -76,7 +76,7 @@ describe('Creating new test report Module: createNewTestReport', () => {
         expect(() => expectedResponse()).toThrow(msgError);
         expect(res.json).not.toHaveBeenCalledWith(req.body);
         expect(res.json).toHaveBeenCalledWith({"error":msgError});
-        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.serverProblem.internalError);
     });
 
     test('Test createNewTestReport: missing requiered parameters', async() =>{
@@ -104,7 +104,7 @@ describe('Creating new test report Module: createNewTestReport', () => {
         expect(() => expectedResponse()).toThrow(msgError);
         expect(res.json).not.toHaveBeenCalledWith(req.body);
         expect(res.json).toHaveBeenCalledWith({"error":expectedErrorMsg});
-        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.serverProblem.internalError);
 
     });
 
@@ -128,7 +128,7 @@ describe('Creating new test report Module: createNewTestReport', () => {
         // Making assertion
         expect(unitTestManager.testReport).toHaveBeenCalledWith(reqMissingParam.body);
         expect(saveMock).toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.reqSuccessfull.created);
         expect(res.json).toHaveBeenCalledWith(reqMissingParam.body)
     });
 });
@@ -150,7 +150,7 @@ describe('Getting test report by ID Module: getTestReportByID', () => {
         await unitTestManager.getTestReportByID(req, res);
         // making assertions
         expect(res.json).toHaveBeenCalledWith(expectedResponse);
-        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.reqSuccessfull.ok);
     });
 
     test('Test getTestReportByID: ID not found', async()=>{
@@ -170,7 +170,7 @@ describe('Getting test report by ID Module: getTestReportByID', () => {
         // Making assertions
         expect(res.json).not.toHaveBeenCalledWith(expectedResponse);
         expect(res.json).toHaveBeenCalledWith(expectedJsonValue);
-        expect(res.status).toHaveBeenCalledWith(404);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.clientError.notFound);
     });
 
     test('Test getTestReportByID: throwsing error', async() => {
@@ -193,6 +193,6 @@ describe('Getting test report by ID Module: getTestReportByID', () => {
         expect(() => expectedResponse()).toThrow(msgError);
         expect(res.json).not.toHaveBeenCalledWith(notExpectedResponse);
         expect(res.json).toHaveBeenCalledWith({"error":msgError});
-        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.serverProblem.internalError);
     });
 });
