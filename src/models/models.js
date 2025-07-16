@@ -6,11 +6,11 @@ const Schema = mongoose.Schema;
 export const testReportSchema = new Schema ({
     frameworkName: {
         type:String,
-        requiere:'Entere the framework name'
+        required:'Entere the framework name'
     },
     suiteName: {
         type:String,
-        require: 'Enter a test suite name'
+        required: 'Enter a test suite name'
     },
     tags: {
         type:Array
@@ -18,13 +18,13 @@ export const testReportSchema = new Schema ({
     reportResults:{
         status:{
             type:String,
-            require: 'Enter the results status',
+            required: 'Enter the results status',
             enum: ['PASSED', 'FAILED'],
             default:'FAILED'
         },
         totalExecuted:{
             type:Number,
-            require: 'Enter the total of test cases executed'
+            required: 'Enter the total of test cases executed'
         },
         totalPassed:{
             type:Number
@@ -47,11 +47,11 @@ export const testReportSchema = new Schema ({
     executionTime: {
         startTime:{
             type: Date,
-            require: 'Enter the start time of execution'
+            required: 'Enter the start time of execution'
         },
         endTime:{
             type:Date,
-            require: 'Enter the ed time of execution'
+            required: 'Enter the ed time of execution'
         },
         duration:Number
     },
