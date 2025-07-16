@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">16.52% </span>
+                <span class="strong">8.69% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>19/115</span>
+                <span class='fraction'>10/115</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">7.14% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/28</span>
+                <span class='fraction'>0/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/12</span>
+                <span class='fraction'>2/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">17.27% </span>
+                <span class="strong">9.09% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>19/110</span>
+                <span class='fraction'>10/110</span>
             </div>
         
             
@@ -390,17 +390,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -630,18 +630,18 @@ export class testReportManager {
      * @param {*} res 
      * @returns 
      */
-    async getTestReportByID(req, res) {
-        try{
-            console.debug(`Actual value of ${req.params._id}`);
-            const reportFoundById = await this.testReport.findById(req.params._id);
-            console.dir(reportFoundById,{ depth: null, colors:true});
-            if(!reportFoundById){
-                return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id}  not found`});
+<span class="fstat-no" title="function not covered" >    as</span>ync getTestReportByID(req, res) {
+<span class="cstat-no" title="statement not covered" >        try{</span>
+<span class="cstat-no" title="statement not covered" >            console.debug(`Actual value of ${req.params._id}`);</span>
+            const reportFoundById = <span class="cstat-no" title="statement not covered" >await this.testReport.findById(req.params._id);</span>
+<span class="cstat-no" title="statement not covered" >            console.dir(reportFoundById,{ depth: null, colors:true});</span>
+<span class="cstat-no" title="statement not covered" >            if(!reportFoundById){</span>
+<span class="cstat-no" title="statement not covered" >                return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id}  not found`});</span>
             }
-            res.status(statusCodes.reqSuccessfull.ok).json(reportFoundById);
+<span class="cstat-no" title="statement not covered" >            res.status(statusCodes.reqSuccessfull.ok).json(reportFoundById);</span>
         }catch(error){
-            console.log(`Error trying to get test Report by ID`);
-            res.status(statusCodes.serverProblem.internalError).json({error:error.message});
+<span class="cstat-no" title="statement not covered" >            console.log(`Error trying to get test Report by ID`);</span>
+<span class="cstat-no" title="statement not covered" >            res.status(statusCodes.serverProblem.internalError).json({error:error.message});</span>
         }
     }
 <span class="fstat-no" title="function not covered" >    as</span>ync getTestReportSummarByID(req, res){
@@ -793,7 +793,7 @@ export class testReportManager {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-15T21:58:22.597Z
+                at 2025-07-16T16:22:38.951Z
             </div>
         <script src="../prettify.js"></script>
         <script>

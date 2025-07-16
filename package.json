@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon ./index.js --exec babel-node $*",
     "test": "jest --coverage testControllers",
-    "testJust": "jest -t='Test createNewTestReport: throwing error'"
+    "testJust": "jest -t='Creating new test report Module: createNewTestReport'"
   },
   "author": "Eleusis Carretero",
   "license": "ISC",

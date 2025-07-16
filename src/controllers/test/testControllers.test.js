@@ -10,164 +10,135 @@ const unitTestManager = new testReportManager();
 /**
  * createNewTestReport UnitTest
  */
-
-test('Test createNewTestReport: Positive response', async() => {
-
-    // define variables
-    const req = {
-        body: {
-            frameworkName: "Selenium-java-automation",
-            suiteName: "Nightly regression",
-            tags: ["smoke", "log in", "products", "sanity"],
-            reportResults: {
-                status:'PASSED',
-                totalExecuted: 10,
-                totalPassed: 10,
-                totalFailed: 0,
-                reportLink: "https://report_n1.xml",
-                failedTestCases: null
-            },
-            retry: false,
-            executionTimes: {
-                startTime: "2025-08-09",
-                endTime: "2025-08-09",
-                duration: 70000
-            },
-            enviroment:{
-                browser: "Chrome",
-                branch: "main",
-                commit: "b5b4bce"
+describe('Creating new test report Module: createNewTestReport', () => {
+    let req; 
+    let res;
+    beforeEach(() => {
+        console.log("Creating common const variables");
+        req = {
+            body: {
+                frameworkName: "Selenium-java-automation",
+                suiteName: "Nightly regression",
+                tags: ["smoke", "log in", "products", "sanity"],
+                reportResults: {
+                    status:'PASSED',
+                    totalExecuted: 10,
+                    totalPassed: 10,
+                    totalFailed: 0,
+                    reportLink: "https://report_n1.xml",
+                    failedTestCases: null
+                },
+                retry: false,
+                executionTimes: {
+                    startTime: "2025-08-09",
+                    endTime: "2025-08-09",
+                    duration: 70000
+                },
+                enviroment:{
+                    browser: "Chrome",
+                    branch: "main",
+                    commit: "b5b4bce"
+                }
             }
         }
-    }
-    const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis()
-    }
-    //mocking
-    const saveMock = jest.fn().mockResolvedValue(req.body);
-    unitTestManager.testReport = jest.fn(() => ({
-        save: saveMock
-    }));
-    // calling function under test
-    await unitTestManager.createNewTestReport(req,res);
-    // Making assertion
-    expect(unitTestManager.testReport).toHaveBeenCalledWith(req.body);
-    expect(saveMock).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(req.body)
-});
-
-test('Test createNewTestReport: throwing error', async() => {
-    const msgError = "expectedResponse is not defined";
-    const req = {
-        body: {
-            frameworkName: "Selenium-java-automation",
-            suiteName: "Nightly regression",
-            tags: ["smoke", "log in", "products", "sanity"],
-            reportResults: {
-                status:'PASSED',
-                totalExecuted: 10,
-                totalPassed: 10,
-                totalFailed: 0,
-                reportLink: "https://report_n1.xml",
-                failedTestCases: null
-            },
-            retry: false,
-            executionTimes: {
-                startTime: "2025-08-09",
-                endTime: "2025-08-09",
-                duration: 70000
-            },
-            enviroment:{
-                browser: "Chrome",
-                branch: "main",
-                commit: "b5b4bce"
-            }
+        res = {
+            json: jest.fn(),
+            status: jest.fn().mockReturnThis()
         }
-    }
-    const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis()
-    }
-    // 3. Mock the value of the function we're Testing
-    unitTestManager.testReport = {
-        findById: jest.fn(() => {throw new Error(msgError)})
-    }
-    // Execution function under test
-    await unitTestManager.createNewTestReport(req,res);
-    // Making assertions
-    expect(() => expectedResponse()).toThrow();
-    expect(() => expectedResponse()).toThrow(Error);
-    expect(() => expectedResponse()).toThrow(msgError);
-    expect(res.json).not.toHaveBeenCalledWith(req.body);
-    expect(res.json).toHaveBeenCalledWith({"error":"this.testReport is not a constructor"});
-    expect(res.status).toHaveBeenCalledWith(500);
-    
+    });
+    test('Test createNewTestReport: Positive response', async() => {        
+        //mocking
+        const saveMock = jest.fn().mockResolvedValue(req.body);
+        unitTestManager.testReport = jest.fn(() => ({
+            save: saveMock
+        }));
+        // calling function under test
+        await unitTestManager.createNewTestReport(req,res);
+        // Making assertion
+        expect(unitTestManager.testReport).toHaveBeenCalledWith(req.body);
+        expect(saveMock).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+        expect(res.json).toHaveBeenCalledWith(req.body)
+    });
 
+    test('Test createNewTestReport: throwing error', async() => {
+        const msgError = "expectedResponse is not defined";
+        // 3. Mock the value of the function we're Testing
+        unitTestManager.testReport = {
+            findById: jest.fn(() => {throw new Error(msgError)})
+        }
+        // Execution function under test
+        await unitTestManager.createNewTestReport(req,res);
+        // Making assertions
+        expect(() => expectedResponse()).toThrow();
+        expect(() => expectedResponse()).toThrow(Error);
+        expect(() => expectedResponse()).toThrow(msgError);
+        expect(res.json).not.toHaveBeenCalledWith(req.body);
+        expect(res.json).toHaveBeenCalledWith({"error":"this.testReport is not a constructor"});
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
 });
 
-/**
-  * getTestReportByID UnitTest
-  *  */   
-test('Test getTestReportByID: Positive response', async () => {
-    // 2 mock the parameters needed for the function
-    const expectedResponse = {_id:'123', name: 'test report'};
-    const req = {params: {_id: '123'}};
-    const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis()
-    };
-    // 3. Mock the value of the function we're Testing
-     unitTestManager.testReport = {
-        findById: jest.fn(() => expectedResponse)
-    }
-    // Calling method to be evaludated
-    await unitTestManager.getTestReportByID(req, res);
-    // making assertions
-    expect(res.json).toHaveBeenCalledWith(expectedResponse);
-    expect(res.status).toHaveBeenCalledWith(200);
-});
+describe('Getting test report by ID Module: getTestReportByID', () => {
+    test('Test getTestReportByID: Positive response', async () => {
+        // 2 mock the parameters needed for the function
+        const expectedResponse = {_id:'123', name: 'test report'};
+        const req = {params: {_id: '123'}};
+        const res = {
+            json: jest.fn(),
+            status: jest.fn().mockReturnThis()
+        };
+        // 3. Mock the value of the function we're Testing
+        unitTestManager.testReport = {
+            findById: jest.fn(() => expectedResponse)
+        }
+        // Calling method to be evaludated
+        await unitTestManager.getTestReportByID(req, res);
+        // making assertions
+        expect(res.json).toHaveBeenCalledWith(expectedResponse);
+        expect(res.status).toHaveBeenCalledWith(200);
+    });
 
-test('Test getTestReportByID: ID not found', async()=>{
-    // 2 mock the parameters needed for the function
-    const expectedResponse = null;
-    const req = {params: {_id: '123'}};
-    const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis()
-    };
-    const expectedJsonValue = {message: `_id: ${req.params._id}  not found`};
-    // 3. Mock the value of the function we're Testing
-     unitTestManager.testReport = {
-        findById: jest.fn(() => expectedResponse)
-    }
-    await unitTestManager.getTestReportByID(req, res);
-    // Making assertions
-    expect(res.json).not.toHaveBeenCalledWith(expectedResponse);
-    expect(res.json).toHaveBeenCalledWith(expectedJsonValue);
-    expect(res.status).toHaveBeenCalledWith(404);
-});
+    test('Test getTestReportByID: ID not found', async()=>{
+        // 2 mock the parameters needed for the function
+        const expectedResponse = null;
+        const req = {params: {_id: '123'}};
+        const res = {
+            json: jest.fn(),
+            status: jest.fn().mockReturnThis()
+        };
+        const expectedJsonValue = {message: `_id: ${req.params._id}  not found`};
+        // 3. Mock the value of the function we're Testing
+        unitTestManager.testReport = {
+            findById: jest.fn(() => expectedResponse)
+        }
+        await unitTestManager.getTestReportByID(req, res);
+        // Making assertions
+        expect(res.json).not.toHaveBeenCalledWith(expectedResponse);
+        expect(res.json).toHaveBeenCalledWith(expectedJsonValue);
+        expect(res.status).toHaveBeenCalledWith(404);
+    });
 
-test('Test getTestReportByID: throwsing error', async() => {
-    // 2 mock the parameters needed for the function
-    const msgError = "expectedResponse is not defined";
-    const notExpectedResponse = {_id:'123', name: 'test report'};
-    const req = {params: {_id: '123'}};
-    const res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis()
-    };
-    // 3. Mock the value of the function we're Testing
-    unitTestManager.testReport = {
-        findById: jest.fn(() => {throw new Error(msgError)})
-    }
-    await unitTestManager.getTestReportByID(req, res);
-    // Making assertions
-    expect(() => expectedResponse()).toThrow();
-    expect(() => expectedResponse()).toThrow(Error);
-    expect(() => expectedResponse()).toThrow(msgError);
-    expect(res.json).not.toHaveBeenCalledWith(notExpectedResponse);
-    expect(res.json).toHaveBeenCalledWith({"error":msgError});
-    expect(res.status).toHaveBeenCalledWith(500);
+    test('Test getTestReportByID: throwsing error', async() => {
+        // 2 mock the parameters needed for the function
+        const msgError = "expectedResponse is not defined";
+        const notExpectedResponse = {_id:'123', name: 'test report'};
+        const req = {params: {_id: '123'}};
+        const res = {
+            json: jest.fn(),
+            status: jest.fn().mockReturnThis()
+        };
+        // 3. Mock the value of the function we're Testing
+        unitTestManager.testReport = {
+            findById: jest.fn(() => {throw new Error(msgError)})
+        }
+        await unitTestManager.getTestReportByID(req, res);
+        // Making assertions
+        expect(() => expectedResponse()).toThrow();
+        expect(() => expectedResponse()).toThrow(Error);
+        expect(() => expectedResponse()).toThrow(msgError);
+        expect(res.json).not.toHaveBeenCalledWith(notExpectedResponse);
+        expect(res.json).toHaveBeenCalledWith({"error":msgError});
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
 });
