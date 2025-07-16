@@ -13,14 +13,14 @@ const mongoScript = path.join(__dirname, 'start_mongo.sh');
 // Ejecuta el script
 exec(`bash ${mongoScript}`, (error, stdout, stderr) => {
   if (error) {
-    console.error(`❌ Error ejecutando script: ${error.message}`);
+    console.error(`Error ejecutando script: ${error.message}`);
     return;
   }
   if (stderr) {
-    console.error(`⚠️ STDERR: ${stderr}`);
+    console.error(`STDERR: ${stderr}`);
   }
 
-  console.log(`📜 STDOUT:\n${stdout}`);
+  console.log(`STDOUT:\n${stdout}`);
 });
 
 const args = require('minimist')(process.argv.slice(2));
