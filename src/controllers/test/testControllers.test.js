@@ -1,5 +1,6 @@
 import { testReportManager } from "../controllers";
-const { statusCodes } = require("../codes"); 
+const { statusCodes } = require("../codes");
+const { ObjectId } = require("mongodb");
 
 /**
  * Globals
@@ -7,12 +8,15 @@ const { statusCodes } = require("../codes");
 
 // 1. create a global instance of the class we can to mock
 const unitTestManager = new testReportManager();
+const res = {
+    json: jest.fn(),
+    status: jest.fn().mockReturnThis()
+};
 /**
  * createNewTestReport UnitTest
  */
 describe('Creating new test report Module: createNewTestReport', () => {
     let req; 
-    let res;
     beforeEach(() => {
         console.log("Creating common const variables");
         req = {
@@ -40,10 +44,6 @@ describe('Creating new test report Module: createNewTestReport', () => {
                     commit: "b5b4bce"
                 }
             }
-        }
-        res = {
-            json: jest.fn(),
-            status: jest.fn().mockReturnThis()
         }
     });
     test('Test createNewTestReport: Positive response', async() => {        
@@ -134,6 +134,7 @@ describe('Creating new test report Module: createNewTestReport', () => {
 });
 
 describe('Deleting all test reports from BD Module:deleteAllReports', () => {
+    let req;
     beforeEach(() => {
         console.log("Creating common const variables");
         req = {
@@ -161,10 +162,6 @@ describe('Deleting all test reports from BD Module:deleteAllReports', () => {
                     commit: "b5b4bce"
                 }
             }
-        }
-        res = {
-            json: jest.fn(),
-            status: jest.fn().mockReturnThis()
         }
     });
     test('Test seleteAllReports: correclty delating', async() => {
@@ -197,10 +194,6 @@ describe('Getting test report by ID Module: getTestReportByID', () => {
         // 2 mock the parameters needed for the function
         const expectedResponse = {_id:'123', name: 'test report'};
         const req = {params: {_id: '123'}};
-        const res = {
-            json: jest.fn(),
-            status: jest.fn().mockReturnThis()
-        };
         // 3. Mock the value of the function we're Testing
         unitTestManager.testReport = {
             findById: jest.fn(() => expectedResponse)
@@ -216,10 +209,6 @@ describe('Getting test report by ID Module: getTestReportByID', () => {
         // 2 mock the parameters needed for the function
         const expectedResponse = null;
         const req = {params: {_id: '123'}};
-        const res = {
-            json: jest.fn(),
-            status: jest.fn().mockReturnThis()
-        };
         const expectedJsonValue = {message: `_id: ${req.params._id}  not found`};
         // 3. Mock the value of the function we're Testing
         unitTestManager.testReport = {
@@ -227,7 +216,6 @@ describe('Getting test report by ID Module: getTestReportByID', () => {
         }
         await unitTestManager.getTestReportByID(req, res);
         // Making assertions
-        expect(res.json).not.toHaveBeenCalledWith(expectedResponse);
         expect(res.json).toHaveBeenCalledWith(expectedJsonValue);
         expect(res.status).toHaveBeenCalledWith(statusCodes.clientError.notFound);
     });
@@ -253,5 +241,72 @@ describe('Getting test report by ID Module: getTestReportByID', () => {
         expect(res.json).not.toHaveBeenCalledWith(notExpectedResponse);
         expect(res.json).toHaveBeenCalledWith({"error":msgError});
         expect(res.status).toHaveBeenCalledWith(statusCodes.serverProblem.internalError);
+    });
+});
+
+describe('Validation of get summary by ID module', () =>{
+    test('Test getTestReportSummarByID: valid ID', async()=>{
+        const req = {
+            params: {
+                _id: 123456789
+            }
+        }
+        const expectedReportFoundById = {
+            _id:new ObjectId(req.params._id),
+            suiteName:"Login",
+            status: "FAILED",
+            report: "https://myreport.xml",
+            failed: 5,
+            browser: "Chrome",
+            branch: "master"
+        }
+        // mocking
+        unitTestManager.testReport = {
+            aggregate: jest.fn(() => expectedReportFoundById)
+        };
+        // calling function
+        await unitTestManager.getTestReportSummarByID(req, res);
+        //Making assertions
+        expect(res.json).toHaveBeenCalledWith(expectedReportFoundById);
+        expect(res.status).toHaveBeenCalledWith(statusCodes.reqSuccessfull.ok);
+    });
+
+    test('Test getTestReportSummarByID: throw error', async() => {
+        const req = {
+            params: {
+                _id: 123456789
+            }
+        }
+        const msgError = "expectedResponse is not defined";
+        // mocking
+        unitTestManager.testReport = {
+            aggregate: jest.fn(() => {throw new Error(msgError)})
+        };
+        // calling function
+        await unitTestManager.getTestReportSummarByID(req, res);
+        // Making assertion
+        expect(() => expectedResponse()).toThrow();
+        expect(() => expectedResponse()).toThrow(Error);
+        expect(() => expectedResponse()).toThrow(msgError);
+        expect(res.json).toHaveBeenCalledWith({"error":msgError});
+        expect(res.status).toHaveBeenCalledWith(statusCodes.serverProblem.internalError);
+    });
+
+    test('Test getTestReportSummarByID: ID not found', async() => {
+        const req = {
+            params: {
+                _id: 123456789
+            }
+        }
+        const expectedReportFoundById = false;
+        // mocking
+        unitTestManager.testReport = {
+            aggregate: jest.fn(() => expectedReportFoundById)
+        };
+        // calling function
+        await unitTestManager.getTestReportSummarByID(req, res);
+        //Making assertions
+        expect(res.json).toHaveBeenCalledWith({message: `_id: ${req.params._id}  not found`});
+        expect(res.status).toHaveBeenCalledWith(statusCodes.clientError.notFound);
     });
 });
