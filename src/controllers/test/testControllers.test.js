@@ -64,9 +64,10 @@ describe('Creating new test report Module: createNewTestReport', () => {
     test('Test createNewTestReport: throwing error', async() => {
         const msgError = "expectedResponse is not defined";
         // 3. Mock the value of the function we're Testing
-        unitTestManager.testReport = {
-            findById: jest.fn(() => {throw new Error(msgError)})
-        }
+        const saveMock = jest.fn(() => {{throw new Error(msgError)}});
+        unitTestManager.testReport = jest.fn(() => ({
+            save: saveMock
+        }));
         // Execution function under test
         await unitTestManager.createNewTestReport(req,res);
         // Making assertions
@@ -74,7 +75,7 @@ describe('Creating new test report Module: createNewTestReport', () => {
         expect(() => expectedResponse()).toThrow(Error);
         expect(() => expectedResponse()).toThrow(msgError);
         expect(res.json).not.toHaveBeenCalledWith(req.body);
-        expect(res.json).toHaveBeenCalledWith({"error":"this.testReport is not a constructor"});
+        expect(res.json).toHaveBeenCalledWith({"error":msgError});
         expect(res.status).toHaveBeenCalledWith(500);
     });
 
@@ -91,6 +92,11 @@ describe('Creating new test report Module: createNewTestReport', () => {
                 }
             }
         }
+        //mocking
+        const saveMock = jest.fn(() => {{throw new Error(expectedErrorMsg)}});
+        unitTestManager.testReport = jest.fn(() => ({
+            save: saveMock
+        }));
         // Calling function under test
         await unitTestManager.createNewTestReport(reqMissingParam, res);
         // Making assertions

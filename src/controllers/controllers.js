@@ -4,12 +4,11 @@ import req from "express/lib/request";
 import { statusCodes } from "./codes";
 const { ObjectId } = require("mongodb");
 
-
+const  TestReport = mongoose.model('testReport', testReportSchema);
 
 export class testReportManager {
-    testReport;
     constructor(){
-        this.testReport = mongoose.model('testReport', testReportSchema);
+        this.testReport = TestReport;
     }
     // /testReport quieries
     /**
