@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon ./index.js --exec babel-node $*",
     "test": "jest --coverage testControllers",
-    "testJust": "jest -t='Test createNewTestReport: missing requiered parameters'"
+    "testJust": "jest -t='Test createNewTestReport: missing requiered parameters'",
+    "testDeleteAll": "jest -t='Deleting all test reports from BD Module:deleteAllReports'"
   },
   "author": "Eleusis Carretero",
   "license": "ISC",

@@ -133,6 +133,65 @@ describe('Creating new test report Module: createNewTestReport', () => {
     });
 });
 
+describe('Deleting all test reports from BD Module:deleteAllReports', () => {
+    beforeEach(() => {
+        console.log("Creating common const variables");
+        req = {
+            body: {
+                frameworkName: "Selenium-java-automation",
+                suiteName: "Nightly regression",
+                tags: ["smoke", "log in", "products", "sanity"],
+                reportResults: {
+                    status:'PASSED',
+                    totalExecuted: 10,
+                    totalPassed: 10,
+                    totalFailed: 0,
+                    reportLink: "https://report_n1.xml",
+                    failedTestCases: null
+                },
+                retry: false,
+                executionTime: {
+                    startTime: "2025-08-09",
+                    endTime: "2025-08-09",
+                    duration: 70000
+                },
+                enviroment:{
+                    browser: "Chrome",
+                    branch: "main",
+                    commit: "b5b4bce"
+                }
+            }
+        }
+        res = {
+            json: jest.fn(),
+            status: jest.fn().mockReturnThis()
+        }
+    });
+    test('Test seleteAllReports: correclty delating', async() => {
+        const expectedSuccessMsg = "All the reports has been deleted";
+        const all = {}
+        unitTestManager.testReport = {
+            deleteMany: jest.fn(() => all)
+        }
+        await unitTestManager.deleteAllReports(req, res);
+        // making assertions
+        expect(res.json).toHaveBeenCalledWith({message: expectedSuccessMsg});
+        expect(res.status).toHaveBeenCalledWith(statusCodes.reqSuccessfull.ok);
+    });
+    test('Test seleteAllReports: throw error trying to delating', async() => {
+        const expectedErrorMsg = "expectedResponse is not defined";
+        unitTestManager.testReport = {
+            deleteMany: jest.fn(() => {throw new Error(expectedErrorMsg)})
+        }
+        await unitTestManager.deleteAllReports(req, res);
+        // making assertions
+        expect(() => expectedResponse()).toThrow();
+        expect(() => expectedResponse()).toThrow(expectedErrorMsg);
+        expect(res.json).toHaveBeenCalledWith({error: expectedErrorMsg});
+        expect(res.status).toHaveBeenCalledWith(statusCodes.serverProblem.internalError);
+    });
+});
+
 describe('Getting test report by ID Module: getTestReportByID', () => {
     test('Test getTestReportByID: Positive response', async () => {
         // 2 mock the parameters needed for the function
