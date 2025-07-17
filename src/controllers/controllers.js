@@ -137,7 +137,7 @@ export class testReportManager {
         try{
             const deleted = await this.testReport.findByIdAndDelete(req.params._id);
             if(!deleted){
-                return res.status(statusCodes.clientError.notFound).json({message: `_id: ${req.params._id} not found`})
+                this._isIDFound(res, id);
             }
             res.status(statusCodes.reqSuccessfull.noContent).json({"message": `${req.params._id} successfully deleteded`});
         }catch(error){

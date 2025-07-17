@@ -2,10 +2,12 @@ import express from 'express';
 import bodyParser from 'body-parser'
 import routes from './src/routes/routes.js';
 
-
 const { exec } = require('child_process');
 const mongoose = require('mongoose');
 const path = require('path');
+const connectMongoAtlas = require('./mongoAtlasConnection.js');
+ 
+
 
 // Ruta absoluta o relativa del script
 const mongoScript = path.join(__dirname, 'start_mongo.sh');
@@ -26,12 +28,21 @@ exec(`bash ${mongoScript}`, (error, stdout, stderr) => {
 const args = require('minimist')(process.argv.slice(2));
 const app = express();
 const PORT = 3000 || args.port;
+const ATLASDB = false || args.atlasdb;
 
-//mongoose connection
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/CRMdb',{
-    useNewUrlParser:true,
-});
+if(!ATLASDB){
+  //mongoose connection
+  console.log("----------- Making connection with LOCAL DB ----------------");
+  mongoose.Promise = global.Promise;
+  mongoose.connect('mongodb://localhost:27017/CRMdb',{
+  useNewUrlParser:true,
+  });
+}
+else{
+  console.log("------------- Making connection with ATLASDB -----------------");
+  connectMongoAtlas();
+}
+
 
 // bodyparser setup
 app.use(bodyParser.urlencoded({extended:true}));

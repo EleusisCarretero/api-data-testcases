@@ -6,13 +6,15 @@
   "scripts": {
     "start": "nodemon ./index.js --exec babel-node $*",
     "test": "jest --coverage testControllers",
-    "testJust": "jest -t='Test createNewTestReport: missing requiered parameters'",
-    "testDeleteAll": "jest -t='Deleting all test reports from BD Module:deleteAllReports'"
+    "testJust": "jest -t='Test getTestReportByID: ID not found'",
+    "testDeleteAll": "jest -t='Deleting all test reports from BD Module:deleteAllReports'",
+    "testSummary": "jest -t='Validation of get summary by ID module'"
   },
   "author": "Eleusis Carretero",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.0",
+    "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "minimist": "^1.2.8",
     "mongoose": "^8.16.3",
