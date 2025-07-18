@@ -10,32 +10,36 @@ const Users = mongoose.model('users', usersSchema);
 
 export class testReportManager {
     constructor(){
-        this.testReport = TestReport;
-        this.users = Users;
+        this.testReport = TestReport;  // Test report collection
+        this.users = Users; // user collections (authentication and security)
     }
-    // /testReport quieries
-    /**
-     * 
-     * @param {*} rep 
-     * @param {*} res 
+    /** 
+     * Create a new testReport document which should contains the reuired fields from
+     * testReportSchema. This data should come inside req.body
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
      */
     async createNewTestReport(rep, res) {
         try{
             let newTestReport = new this.testReport(rep.body);
-            console.log(`newTestReport value ${newTestReport}`);
             const savedTestReport = await newTestReport.save();
-            console.log(`SaveTestReport value: ${savedTestReport}`);
             res.status(statusCodes.reqSuccessfull.created).json(savedTestReport);
         }catch(error){
             console.log(`Error trying to add new test report ${error}`);
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
+
     /**
-     * 
-     * @param {*} req 
-     * @param {*} res 
-     * @returns 
+     * Retruns all the available testReports documents. If some filters are added in the query
+     * it can filter based on status, suitName, start and end, or limit the response. this should
+     * come in req.query.
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
      */
     async getAllTestReports(req, res){
         try{
@@ -51,9 +55,6 @@ export class testReportManager {
                 if (start) filter['execution.startTime'].$gte = new Date(start);
                 if (end) filter['execution.startTime'].$lte = new Date(end);
             }
-
-            console.dir(filter,{ depth: null, colors:true});
-            console.log(`Actual limit of result: ${limit}`);
             const reportsFound = await this.testReport.find(filter).limit(limit).sort({createdAt:-1});
             if(reportsFound.length === 0){
                 return res.status(statusCodes.reqSuccessfull.ok).json({data:reportsFound, message:"No reports found with that filter"});
@@ -64,10 +65,13 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
+
     /**
-     * 
-     * @param {*} req 
-     * @param {*} res 
+     * Deltes all available testReport documents
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
      */
     async deleteAllReports(req, res){
         try{
@@ -78,12 +82,13 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
-    // /testReport:_id quieres
+
     /**
-     * 
-     * @param {*} req 
-     * @param {*} res 
-     * @returns 
+     * Returns one single testReport document based on ID. The id should come in the req.params
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
      */
     async getTestReportByID(req, res) {
         try{
@@ -100,6 +105,14 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
+
+    /**
+     * It returns a summared version of the testReport document. The id should come in the req.params
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
+     */
     async getTestReportSummarByID(req, res){
         try{
             const id = req.params._id;
@@ -126,15 +139,26 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
+
+    /**
+     * Internal common method to retruns that id has not been found, used in:
+     * getTestReportByID and getTestReportSummarByID
+     * @param {*} rep : Reques object. 
+     * @param {*} id : id that was given but not found.
+     * @returns 
+     */
     _isIDFound(res, id){
         return res
         .status(statusCodes.clientError.notFound)
         .json({message: `_id: ${id}  not found`});
     }
+
     /**
-     * Delete testReport by ID
-     * @param {*} req - missing
-     * @param {*} res - missong
+     * Deletes the specific test report document based on the id.
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
      */
     async deleteTestReportByID(req, res){
         try{
@@ -148,6 +172,14 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
+
+    /**
+     * Enables or disble the retry fields in the testReport docuemtn given based on the ID
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
+     */
     async retryTestReportByID(req, res) {
         try{
             const retry = req.query;
@@ -161,11 +193,13 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
+
     /**
-     * Update a testReport based by ID
-     * @param {*} req  - missing
-     * @param {*} res - missing
-     * @returns 
+     * Update the testReport document based on ID.
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
      */
     async updateTestReportByID(req, res){
         try{
@@ -181,8 +215,14 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
-    // /stats/global
 
+    /**
+     * Gives global stats of the testReport docuemts, like total, passed, failed
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
+     */
     async getStatsGlobal(req, res){
         try{
             const statsFound = await this.testReport.aggregate([
@@ -202,7 +242,13 @@ export class testReportManager {
         }
     }
 
-    // stats/byTag
+    /**
+     * Gives stats of the testreport docuemts based on tags
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
+     */
     async getStatsTags(req, res){
         try{
             const statsFound = await this.testReport.aggregate([
@@ -228,6 +274,13 @@ export class testReportManager {
         }
     }
 
+    /**
+     * Gives stats of the testreport docuemts based on a specific tag
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
+     */
     async getStatsTagsByTag(req, res){
         try{
             const tag = req.params.tag;
@@ -250,11 +303,13 @@ export class testReportManager {
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
     }
+
     /**
-     * 
-     * @param {*} req 
-     * @param {*} res 
-     * @returns 
+     * Generates a Token if the username and password are correclty given and valid
+     * @param {*} rep : Reques object. Represent the HTTP query from client to server.
+     * It contains info like .params, .query, .body, .cookies, .ip, .path.
+     * @param {*} res : Response object. Represents the HTTP answare. It gives the status code
+     * redirect, add headers from the response.
      */
     async getToken (req, res){
         const {username, password} = req.body;
