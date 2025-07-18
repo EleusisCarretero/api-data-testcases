@@ -1,10 +1,11 @@
 import {testReportManager} from '../controllers/controllers';
+const auth = require('../middlewares/auth.moddleware')
 
 const testrepo = new testReportManager();
 
 const routes = (app) => {
     app.route('/testReport')
-    .get((req, res) => testrepo.getAllTestReports(req, res))
+    .get(auth,(req, res) => testrepo.getAllTestReports(req, res))
     .post((req, res) => testrepo.createNewTestReport(req, res))
     .delete((req,res) => testrepo.deleteAllReports(req, res));
 
@@ -29,7 +30,7 @@ const routes = (app) => {
     app.route('/testReport/stats/byTags/:tag')
     .get((req, res) => testrepo.getStatsTagsByTag(req, res));
 
-    app.route('/testReport/token/generateToken/')
+    app.route('/testReport/token/generateToken')
     .get((req, res) => testrepo.getToken(req, res));
     
 }
