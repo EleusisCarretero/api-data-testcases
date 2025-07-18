@@ -1,5 +1,6 @@
 import {testReportManager} from '../controllers/controllers';
 const auth = require('../middlewares/auth.middleware')
+const credentials = require('../middlewares/fields.middleware')
 
 const testrepo = new testReportManager();
 
@@ -31,7 +32,7 @@ const routes = (app) => {
     .get((req, res) => testrepo.getStatsTagsByTag(req, res));
 
     app.route('/testReport/token/generateToken')
-    .get((req, res) => testrepo.getToken(req, res));
+    .get(credentials,(req, res) => testrepo.getToken(req, res));
     
 }
 export default routes
