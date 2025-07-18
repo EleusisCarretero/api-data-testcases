@@ -1,3 +1,5 @@
-mongo-data
+mongo-data/
+node_modules/
+mongo-data/
 .*wt
 .env
