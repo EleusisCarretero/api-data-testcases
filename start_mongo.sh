@@ -13,4 +13,4 @@ LOG_FILE="$DATA_DIR/mongod.log"
 # Iniciar mongod en segundo plano
 mongod --dbpath "$DATA_DIR" --fork --logpath "$LOG_FILE"
 
-echo "✅ MongoDB iniciado en segundo plano con dbpath: $DATA_DIR"
+echo "✅ ----------------- MongoDB iniciado en segundo plano con dbpath: $DATA_DIR ----------------- ✅"

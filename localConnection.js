@@ -10,9 +10,10 @@ const localDBConnection = async() => {
         mongoose.connect(`mongodb://localhost:${LOCAL_PORT}/${DB}`,{
         useNewUrlParser:true,
         });
+        console.log("✅------------ Making connection with LOCAL DB: 好吧 ----------------✅");
     }catch(error){
-        console.error(`Unabel to make connection with local daba base ${databaseName}`)
+        console.error(`❌------------- Unabel to make connection with local daba base ${databaseName} : 不好 -----------------❌`)
     }
 }
 
-module.export = localDBConnection;
+module.exports = localDBConnection;

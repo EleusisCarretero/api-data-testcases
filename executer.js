@@ -17,4 +17,4 @@ const scriptExeter = {
   }
 };
 
-module.exports = { scriptExeter };
+module.exports = scriptExeter;
