@@ -1,18 +1,18 @@
 import {testReportManager} from '../controllers/controllers';
-const auth = require('../middlewares/auth.moddleware')
+const auth = require('../middlewares/auth.middleware')
 
 const testrepo = new testReportManager();
 
 const routes = (app) => {
     app.route('/testReport')
-    .get(auth,(req, res) => testrepo.getAllTestReports(req, res))
+    .get((req, res) => testrepo.getAllTestReports(req, res))
     .post((req, res) => testrepo.createNewTestReport(req, res))
-    .delete((req,res) => testrepo.deleteAllReports(req, res));
+    .delete(auth,(req,res) => testrepo.deleteAllReports(req, res));
 
     app.route('/testReport/:_id')
     .get((req, res) => testrepo.getTestReportByID(req, res))
-    .put((req, res) => testrepo.updateTestReportByID(req,res))
-    .delete((req, res) => testrepo.deleteTestReportByID(req,res));
+    .put(auth,(req, res) => testrepo.updateTestReportByID(req,res))
+    .delete(auth, (req, res) => testrepo.deleteTestReportByID(req,res));
 
     app.route('/testReport/:_id/summary')
     .get((req, res) => testrepo.getTestReportSummarByID(req, res));
