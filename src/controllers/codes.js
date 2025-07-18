@@ -9,6 +9,7 @@ export const statusCodes = {
     ReqRedirect: '', // 300
     clientError: {
         badReq:400,
+        unauthorized:401,
         notFound:404
     },
     serverProblem: {

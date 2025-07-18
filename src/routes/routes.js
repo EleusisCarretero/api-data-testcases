@@ -29,6 +29,8 @@ const routes = (app) => {
     app.route('/testReport/stats/byTags/:tag')
     .get((req, res) => testrepo.getStatsTagsByTag(req, res));
 
+    app.route('/testReport/token/generateToken/')
+    .get((req, res) => testrepo.getToken(req, res));
     
 }
 export default routes

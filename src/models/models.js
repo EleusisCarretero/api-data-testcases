@@ -61,3 +61,22 @@ export const testReportSchema = new Schema ({
         commit:String
     }
 })
+
+export const usersSchema = new Schema({
+    username: {
+        type:String,
+        required: "Enter the username"
+    },
+    password: {
+        type:String,
+        required: 'Enter the password'
+    },
+    email:{
+        type:String,
+        required: 'Enter the email'
+    },
+    role:{
+        type: String,
+        default: 'user'
+    }
+})

@@ -1,14 +1,17 @@
 import mongoose from "mongoose";
-import {testReportSchema} from "../models/models";
+import {testReportSchema, usersSchema} from "../models/models";
 import req from "express/lib/request";
 import { statusCodes } from "./codes";
+const jwt = require('jsonwebtoken');
 const { ObjectId } = require("mongodb");
 
 const  TestReport = mongoose.model('testReport', testReportSchema);
+const Users = mongoose.model('users', usersSchema);
 
 export class testReportManager {
     constructor(){
         this.testReport = TestReport;
+        this.users = Users;
     }
     // /testReport quieries
     /**
@@ -246,5 +249,21 @@ export class testReportManager {
             console.log(`Error trying to the total run`);
             res.status(statusCodes.serverProblem.internalError).json({error:error.message});
         }
+    }
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
+    async getToken (req, res){
+        const {username, password} = req.body;
+        const isValidUSer = await this.users.findOne({username});
+        if(!isValidUSer || isValidUSer.password !== password){
+            return res.status(statusCodes.clientError.unauthorized).json({message: "Invalid user name or wrong password"});
+        }
+        const payload = {userId: isValidUSer._id, username:isValidUSer.usarname};
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: '5h'});
+        res.status(statusCodes.reqSuccessfull.ok).json({token});
     }
 }
